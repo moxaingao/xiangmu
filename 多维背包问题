@@ -1,0 +1,51 @@
+List=[]#存储从键盘输入的数据
+num=int(input("输入物体个数:"))#输入物品个数
+con_num=int(input("输入约束个数:"))#输入约束个数
+values=input("输入物品的价值:").split()#输入物品的价值并进行切割
+for i in values:#把物品的价值添加到列表List中
+    List.append(i)
+for j in range(0,con_num):#把物品的属性值添加到列表List中
+    print("输入第",j+1,"行物品属性值:")
+    con_specific=input().split()
+    for k in con_specific:
+        List.append(k)
+con=input("输入约束值:").split()#输入约束值
+for l in con:#把约束值添加到列表List中
+    List.append(l)
+List=[float(x) for x in List]#将列表中的数据全部转化为float型
+n=num#商品的个数
+m=con_num#约束的个数
+values=List[0:6]#商品价值
+L1=List[num:len(List)-con_num]#将列表List中物品的属性值切割出来赋另一个列表L1
+con_max=List[len(List)-con_num:len(List)]#将列表List中各属性的约束值切割出来赋给另一个列表con_max
+#-------------------
+cur=0#当前装入的物品的属性之和
+temp=[]#存储符合各个约束条件的组合
+a=[0 for i in range(n)]#存储满足一个约束条件的组合
+def back(i,j):#回溯法找出满足条件的物品放入组合
+    global cur
+    if (i >= n):#判断是否遍历完所有物品
+        temp.append(a[:])#将物品的放入组合添加到列表temp中
+    else:
+        if (cur + v[i] <= j):#满足条件，继续探索节点
+            a[i]=values[i]
+            cur=cur+v[i]
+            back(i + 1,j)#继续探索节点
+            cur=cur-v[i]#回溯上一层
+        a[i]=0#不满足约束，不放入
+        back(i + 1,j)#继续探索节点
+for k in range(0,m):#执行回溯法找到所有符合约束的物品放入组合
+    v = L1[k*num:k*num+num]
+    q=con_max[k]
+    back(0,q)
+com=[]#存储满足所有约束的组合
+v=[]#存储组合的物品总价值
+for x in temp:#在满足各个约束的组合中寻找满足所有约束的组合
+    times=temp.count(x)
+    if(times==con_num and x not in com):
+        com.append(x)
+for l in com:#计算满足所有约束条件的物品放入组合的总价值
+    value=sum(l)
+    v.append(value)
+bestv=max(v)#求出最大的总价值
+print("最优解:",bestv)
